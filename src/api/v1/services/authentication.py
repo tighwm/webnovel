@@ -1,0 +1,118 @@
+import uuid
+
+from fastapi import HTTPException, status
+from jwt import InvalidTokenError
+from pydantic import EmailStr
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from security.jwt import create_access_token, create_refresh_token, decode_jwt
+from api.v1.schemas.user import UserCreate, UserSaveToDB, UserRead
+from api.v1.schemas.tokens import TokenInfo
+from security.passwords import hash_password, validate_password
+from api.v1.schemas.user_session import UserSessionBase
+from api.v1.crud import sqlalchemy_user as user_crud
+from api.v1.crud import sqlalchemy_user_session as user_session_crud
+
+
+def exc_401(message: str):
+    return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail={
+            "message": message,
+        },
+    )
+
+
+def validate_token(
+    token: str,
+    token_type: str,
+):
+    try:
+        payload: dict = decode_jwt(token=token)
+    except InvalidTokenError:
+        raise exc_401("Invalid token")
+    _token_type = payload.get("token_type")
+    if _token_type != token_type:
+        raise exc_401("Invalid token type")
+    return payload
+
+
+async def register(
+    user_in: UserCreate,
+    session: AsyncSession,
+) -> UserRead:
+    user_data = user_in.model_dump()
+    password = user_data.pop("password")
+    user_data["hashed_password"] = hash_password(password)
+    user_in_db = UserSaveToDB(**user_data)
+    user_db = await user_crud.create(
+        user_in=user_in_db,
+        session=session,
+    )
+    return UserRead.model_validate(user_db)
+
+
+async def login(
+    email: EmailStr,
+    password: str,
+    session: AsyncSession,
+) -> TokenInfo:
+    user = await user_crud.get_by_email(
+        email=email,
+        session=session,
+    )
+    if user is None:
+        raise exc_401("Invalid login or password")
+    if not validate_password(
+        password=password,
+        hashed_password=user.hashed_password,
+    ):
+        raise exc_401("Invalid login or password")
+
+    access_token = create_access_token(sub=str(user.id))
+    jti = uuid.uuid4()
+    refresh_token = create_refresh_token(sub=str(user.id), jti=jti)
+    user_session = UserSessionBase(jti=jti, user_id=user.id)
+    await user_session_crud.create(
+        session=session,
+        user_session_in=user_session,
+    )
+    return TokenInfo(
+        access=access_token,
+        refresh=refresh_token,
+    )
+
+
+async def refresh(
+    refresh_token: str,
+    session: AsyncSession,
+) -> TokenInfo:
+    payload = validate_token(
+        token=refresh_token,
+        token_type="refresh",
+    )
+    jti = uuid.UUID(payload.get("jti"))
+    user_session = await user_session_crud.get_by_jti(
+        jti=jti,
+        session=session,
+    )
+    if user_session is None:
+        raise exc_401("Invalid token")
+    sub = payload.get("sub")
+    access_token = create_access_token(sub)
+    return TokenInfo(access=access_token)
+
+
+async def logout(
+    refresh_token: str,
+    session: AsyncSession,
+) -> None:
+    payload = validate_token(
+        token=refresh_token,
+        token_type="refresh",
+    )
+    jti = uuid.UUID(payload.get("jti"))
+    await user_session_crud.delete_by_jti(
+        jti=jti,
+        session=session,
+    )
