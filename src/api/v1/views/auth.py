@@ -67,7 +67,10 @@ async def handle_login(
         value=tokens.refresh,
         httponly=True,
     )
-    return {"access": tokens.access}
+    return {
+        "access": tokens.access,
+        "token_type": "bearer",
+    }
 
 
 @router.post(
