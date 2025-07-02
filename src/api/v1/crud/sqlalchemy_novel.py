@@ -11,4 +11,5 @@ async def create(
     novel = Novel(**novel_in.model_dump())
     session.add(novel)
     await session.commit()
+    await session.refresh(novel)
     return novel

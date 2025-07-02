@@ -11,10 +11,11 @@ async def create(
     session: AsyncSession,
     user_session_in: UserSessionBase,
 ):
-    token_orm = UserSession(**user_session_in.model_dump())
-    session.add(token_orm)
+    user_session_orm = UserSession(**user_session_in.model_dump())
+    session.add(user_session_orm)
     await session.commit()
-    return token_orm
+    await session.refresh(user_session_orm)
+    return user_session_orm
 
 
 async def get_by_jti(

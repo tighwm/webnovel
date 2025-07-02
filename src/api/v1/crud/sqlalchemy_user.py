@@ -12,6 +12,7 @@ async def create(
     user_orm = User(**user_in.model_dump())
     session.add(user_orm)
     await session.commit()
+    await session.refresh(user_orm)
     return user_orm
 
 
