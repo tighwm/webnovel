@@ -6,13 +6,13 @@ from fastapi import (
     status,
     Response,
     Cookie,
-    Form,
 )
-from pydantic import EmailStr
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.v1.services import authentication as auth
 from api.v1.schemas.user import UserRead, UserCreate
+from api.v1.utils import validate_form_data
 from core.database.models import db_helper
 
 router = APIRouter(
@@ -40,23 +40,20 @@ async def handle_register(
 
 
 @router.post(
-    "/login/",
+    "/token/",
 )
 async def handle_login(
     response: Response,
-    email: Annotated[
-        EmailStr,
-        Form(),
-    ],
-    password: Annotated[
-        str,
-        Form(),
+    form_data: Annotated[
+        OAuth2PasswordRequestForm,
+        Depends(),
     ],
     session: Annotated[
         AsyncSession,
         Depends(db_helper.session_getter),
     ],
 ):
+    email, password = validate_form_data(form_data)
     tokens = await auth.login(
         email=email,
         password=password,
@@ -68,7 +65,7 @@ async def handle_login(
         httponly=True,
     )
     return {
-        "access": tokens.access,
+        "access_token": tokens.access,
         "token_type": "bearer",
     }
 
@@ -87,7 +84,10 @@ async def handle_refresh(
     ],
 ):
     tokens = await auth.refresh(refresh_token, session)
-    return {"access": tokens.access}
+    return {
+        "access": tokens.access,
+        "token_type": "bearer",
+    }
 
 
 @router.post(

@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.v1.schemas.novel import NovelRead, NovelCreate
@@ -14,14 +15,19 @@ router = APIRouter(
     tags=["Novel"],
 )
 
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
+
 
 @router.post(
-    "/novel/",
+    "/",
     response_model=NovelRead,
 )
 async def handle_create(
     novel_in: NovelCreate,
-    access_token: str,
+    access_token: Annotated[
+        str,
+        Depends(oauth2_schema),
+    ],
     session: Annotated[
         AsyncSession,
         Depends(db_helper.session_getter),
