@@ -1,40 +1,16 @@
 import uuid
 
-from fastapi import HTTPException, status
-from jwt import InvalidTokenError
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from security.jwt import create_access_token, create_refresh_token, decode_jwt
+from api.v1.utils import exc_401, validate_token
+from security.jwt import create_access_token, create_refresh_token
 from api.v1.schemas.user import UserCreate, UserSaveToDB, UserRead
 from api.v1.schemas.tokens import TokenInfo
 from security.passwords import hash_password, validate_password
 from api.v1.schemas.user_session import UserSessionBase
 from api.v1.crud import sqlalchemy_user as user_crud
 from api.v1.crud import sqlalchemy_user_session as user_session_crud
-
-
-def exc_401(message: str):
-    return HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail={
-            "message": message,
-        },
-    )
-
-
-def validate_token(
-    token: str,
-    token_type: str,
-):
-    try:
-        payload: dict = decode_jwt(token=token)
-    except InvalidTokenError:
-        raise exc_401("Invalid token")
-    _token_type = payload.get("token_type")
-    if _token_type != token_type:
-        raise exc_401("Invalid token type")
-    return payload
 
 
 async def register(
