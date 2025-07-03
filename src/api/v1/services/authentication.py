@@ -1,9 +1,10 @@
 import uuid
 
 from pydantic import EmailStr
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.utils import exc_401, validate_token
+from api.v1.utils import exc_401, validate_token, exc_422
 from security.jwt import create_access_token, create_refresh_token
 from api.v1.schemas.user import UserCreate, UserSaveToDB, UserRead
 from api.v1.schemas.tokens import TokenInfo
@@ -20,11 +21,14 @@ async def register(
     user_data = user_in.model_dump()
     password = user_data.pop("password")
     user_data["hashed_password"] = hash_password(password)
-    user_in_db = UserSaveToDB(**user_data)
-    user_db = await user_crud.create(
-        user_in=user_in_db,
-        session=session,
-    )
+    user_save = UserSaveToDB(**user_data)
+    try:
+        user_db = await user_crud.create(
+            user_in=user_save,
+            session=session,
+        )
+    except IntegrityError:
+        raise exc_422(f"User with {user_save.email} exist")
     return UserRead.model_validate(user_db)
 
 

@@ -12,9 +12,44 @@ from api.v1.crud import sqlalchemy_user as user_crud
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 
-def exc_401(message: str):
+def exc_404(
+    message: str,
+):
+    return HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={
+            "message": message,
+        },
+    )
+
+
+def exc_403(
+    message: str,
+):
+    return HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail={
+            "message": message,
+        },
+    )
+
+
+def exc_401(
+    message: str,
+):
     return HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
+        detail={
+            "message": message,
+        },
+    )
+
+
+def exc_422(
+    message: str,
+):
+    return HTTPException(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         detail={
             "message": message,
         },
