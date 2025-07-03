@@ -1,18 +1,8 @@
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.v1.crud import sqlalchemy_user as user_crud
 from api.v1.schemas.user import UserRead
-from api.v1.utils import get_current_user_by_token
-
-
-def exc_404(
-    message: str,
-):
-    return HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={"message": message},
-    )
+from api.v1.utils import get_current_user_by_token, exc_404
 
 
 async def get_user(
