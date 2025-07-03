@@ -1,5 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
+
 
 from api.v1.schemas.user import UserSaveToDB
 from core.database.models import User
@@ -8,10 +10,14 @@ from core.database.models import User
 async def create(
     session: AsyncSession,
     user_in: UserSaveToDB,
-) -> User:
+) -> User | None:
     user_orm = User(**user_in.model_dump())
     session.add(user_orm)
-    await session.commit()
+    try:
+        await session.commit()
+    except IntegrityError:
+        await session.rollback()
+        return None
     await session.refresh(user_orm)
     return user_orm
 

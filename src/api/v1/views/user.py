@@ -16,6 +16,23 @@ router = APIRouter(
 
 
 @router.get(
+    "/me/",
+    response_model=UserRead,
+)
+async def get_me(
+    access_token: Annotated[
+        str,
+        Depends(oauth2_schema),
+    ],
+    session: Annotated[
+        AsyncSession,
+        Depends(db_helper.session_getter),
+    ],
+):
+    return await users.get_me_by_token(access_token, session)
+
+
+@router.get(
     "/{user_id}/",
     response_model=UserRead,
 )
@@ -31,20 +48,3 @@ async def get_user_by_id(
 ):
     user = await users.get_user(user_id=user_id, session=session)
     return user
-
-
-@router.get(
-    "/me/",
-    response_model=UserRead,
-)
-async def get_me(
-    access_token: Annotated[
-        str,
-        Depends(oauth2_schema),
-    ],
-    session: Annotated[
-        AsyncSession,
-        Depends(db_helper.session_getter),
-    ],
-):
-    return await users.get_me_by_token(access_token, session)

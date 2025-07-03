@@ -17,3 +17,6 @@ class User(Base, IdIntPkMixin):
     user_sessions: Mapped[list["UserSession"]] = relationship(back_populates="user")
     novels: Mapped[list["Novel"]] = relationship(back_populates="author")
     novel_roles: Mapped[list["UserNovelRole"]] = relationship(back_populates="user")
+
+    def __str__(self):
+        return f"{self.id}"
