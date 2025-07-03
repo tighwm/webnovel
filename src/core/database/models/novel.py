@@ -7,7 +7,7 @@ from core.database.models import Base
 from core.database.models.mixins.id_int_pk_mixin import IdIntPkMixin
 
 if TYPE_CHECKING:
-    from core.database.models import User
+    from core.database.models import User, UserNovelRole
 
 
 class Novel(Base, IdIntPkMixin):
@@ -16,3 +16,4 @@ class Novel(Base, IdIntPkMixin):
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     author: Mapped["User"] = relationship(back_populates="novels")
+    user_roles: Mapped["UserNovelRole"] = relationship(back_populates="novel")
