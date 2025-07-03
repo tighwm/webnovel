@@ -27,7 +27,7 @@ async def get_permissions_for_user_to_novel(
         )
         .join(
             UserNovelRole,
-            Role.id == UserNovelRole.id,
+            Role.id == UserNovelRole.role_id,
         )
         .where(
             and_(
