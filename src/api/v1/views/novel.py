@@ -1,11 +1,10 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.v1.schemas.novel import NovelRead, NovelCreate
-from api.v1.utils import get_current_user_by_token
+from api.v1.utils import get_current_user_by_token, oauth2_schema
 from api.v1.services import novel as novel_serv
 from core.database.models import db_helper
 
@@ -14,8 +13,6 @@ router = APIRouter(
     prefix="/novel",
     tags=["Novel"],
 )
-
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 
 @router.post(

@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from pydantic import BaseModel, EmailStr, ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,6 +7,9 @@ from starlette import status
 
 from security.jwt import decode_jwt
 from api.v1.crud import sqlalchemy_user as user_crud
+
+
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 
 def exc_401(message: str):
