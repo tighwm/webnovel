@@ -3,10 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.v1.enums import Action, Resource
 from api.v1.schemas.novel import NovelRead, NovelCreate, NovelUpdate
 from api.v1.utils import get_current_user_by_token, oauth2_schema, exc_403
 from api.v1.services import novel as novel_serv
-from api.v1.services import authorization
+from api.v1.services import role as role_serv
+from api.v1.utils import validate_token
 from core.database.models import db_helper
 
 
@@ -51,14 +53,21 @@ async def handle_update(
         Depends(db_helper.session_getter),
     ],
 ):
+    payload = validate_token(
+        token=access_token,
+        token_type="access",
+    )
+    user_id = int(payload.get("sub"))
     novel = await novel_serv.get_novel(
         novel_id=novel_id,
         session=session,
     )
-    if not await authorization.check_can_edit_novel_by_token(
+    if not await role_serv.has_required_permission(
         session=session,
-        access_token=access_token,
-        novel_id=novel_id,
+        user_id=user_id,
+        target_id=novel_id,
+        action=Action.EDIT,
+        resource=Resource.NOVEL,
     ):
         raise exc_403("Has no permission")
 

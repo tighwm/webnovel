@@ -1,9 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.v1.crud import sqlalchemy_novel as novel_crud
-from api.v1.crud import sqlalchemy_usernovelrole as unr_crud
+from api.v1.services import role as role_serv
 from api.v1.schemas.novel import NovelCreate, NovelRead, NovelUpdate
-from api.v1.schemas.usernovelrole import UserNovelRoleCreate
 from api.v1.utils import exc_404
 from core.database.models import User, Novel
 
@@ -14,12 +13,12 @@ async def create_novel(
     session: AsyncSession,
 ):
     novel = await novel_crud.create(session, novel_in)
-    unr_create = UserNovelRoleCreate(
-        novel_id=novel.id,
+    unr = await role_serv.assign_unr_to_user(
+        session=session,
         user_id=user.id,
-        role_id=1,
+        novel_id=novel.id,
+        role_name="author",
     )
-    await unr_crud.create(session, unr_create)
     return NovelRead.model_validate(novel)
 
 
