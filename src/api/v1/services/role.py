@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.v1.crud import sqlalchemy_role as role_crud
-from api.v1.enums import Action, Resource
+from enums import Action, Resource
 from api.v1.schemas.usernovelrole import UserNovelRoleCreate
 
 
