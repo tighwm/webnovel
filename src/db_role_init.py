@@ -1,16 +1,9 @@
-from enum import Enum
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from api.v1.enums import Resource, Action
+from enums import Resource, Action, RoleNames
 from core.database.models import Permission, Role
-
-
-class RoleNames(Enum):
-    AUTHOR = "author"
-    READER = "reader"
 
 
 async def init_permissions(session: AsyncSession):
