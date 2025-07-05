@@ -19,7 +19,7 @@ async def init_permissions(session: AsyncSession):
             "action": Action.READ.value,
         },
         {
-            "name": "novel.update",
+            "name": "novel.edit",
             "resource": Resource.NOVEL.value,
             "action": Action.EDIT.value,
         },
@@ -55,7 +55,7 @@ async def init_roles(session: AsyncSession):
             "permissions": [
                 "novel.create",
                 "novel.read",
-                "novel.update",
+                "novel.edit",
                 "novel.delete",
                 "novel.publish",
             ],

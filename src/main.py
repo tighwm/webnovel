@@ -12,8 +12,15 @@ from db_role_init import init_roles
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with db_helper.session_getter() as session:
-        await init_roles(session)
+    session_generator = db_helper.session_getter()
+    session = await anext(session_generator)
+    await init_roles(session)
+    try:
+        await anext(session_generator)
+    except StopAsyncIteration:
+        await session.close()
+    del session
+    del session_generator
     yield
     await db_helper.dispose()
 
