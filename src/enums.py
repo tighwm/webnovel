@@ -11,3 +11,8 @@ class Action(Enum):
 class Resource(Enum):
     NOVEL = "novel"
     USER = "user"
+
+
+class RoleNames(Enum):
+    AUTHOR = "author"
+    READER = "reader"
