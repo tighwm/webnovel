@@ -41,6 +41,7 @@ class DatabaseHelper:
     async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
             yield session
+            await session.commit()
 
 
 db_helper = DatabaseHelper(

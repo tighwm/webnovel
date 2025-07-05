@@ -14,7 +14,7 @@ async def create(
     user_orm = User(**user_in.model_dump())
     session.add(user_orm)
     try:
-        await session.commit()
+        await session.flush()
     except IntegrityError:
         await session.rollback()
         return None

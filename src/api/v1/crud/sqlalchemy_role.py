@@ -16,7 +16,7 @@ async def create_unr(
 ):
     urn_orm = UserNovelRole(**unr_in.model_dump())
     session.add(urn_orm)
-    await session.commit()
+    await session.flush()
     await session.refresh(urn_orm)
     return urn_orm
 
