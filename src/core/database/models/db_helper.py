@@ -38,7 +38,11 @@ class DatabaseHelper:
 
     async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
-            yield session
+            try:
+                yield session
+            except BaseException:
+                await session.rollback()
+                raise
             await session.commit()
 
     async def local_session(self):
