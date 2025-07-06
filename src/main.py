@@ -7,20 +7,16 @@ from api import router as api_router
 from core.database.models import db_helper
 from core.config import settings
 
-from db_role_init import init_roles
+from db_role_init import SQLAlchemyRolePermDBInit, roles_config, permissions_data
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    session_generator = db_helper.session_getter()
-    session = await anext(session_generator)
-    await init_roles(session)
-    try:
-        await anext(session_generator)
-    except StopAsyncIteration:
-        await session.close()
-    del session
-    del session_generator
+    db_init = SQLAlchemyRolePermDBInit(db_helper.local_session())
+    await db_init.init(
+        perm_data=permissions_data,
+        roles_data=roles_config,
+    )
     yield
     await db_helper.dispose()
 

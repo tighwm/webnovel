@@ -41,6 +41,9 @@ class DatabaseHelper:
             yield session
             await session.commit()
 
+    async def local_session(self):
+        return self.session_factory()
+
 
 db_helper = DatabaseHelper(
     url=str(settings.db.url),
