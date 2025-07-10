@@ -6,7 +6,9 @@ black = "^25.1.0"
 httpx = "^0.28.1"
 pytest-asyncio = "^1.0.0"
 pytest-mock = "^3.14.1"
-aiosqlite = "^0.21.0"
+pg8000 = "^1.31.2"
+faker = "^37.4.0"
+pytest-docker = "^3.2.3"
 
 [project]
 name = "webnovell"
