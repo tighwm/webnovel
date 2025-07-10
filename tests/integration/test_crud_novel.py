@@ -1,17 +1,20 @@
 from tests.conftest import test_session
-from api.crud import sqlalchemy_novel as novel_crud
-from api.schemas.novel import NovelCreate
-from core.database.models import Novel
 from tests.factories import user_factory
 
 
 async def test_create_novel(test_session, user_factory):
+    from api.crud import sqlalchemy_novel as novel_crud
+    from api.schemas.novel import NovelCreate
+    from core.database.models import Novel
+
     novel_in = NovelCreate(
         title="Shadow Slave",
         description="The book about little man",
         author_id=user_factory.id,
     )
+
     result = await novel_crud.create(test_session, novel_in)
+
     assert result is not None
     assert isinstance(result, Novel)
     fetched = await test_session.get(Novel, result.id)
