@@ -1,7 +1,7 @@
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.schemas.usernovelrole import UserNovelRoleCreate
+from api.schemas.usernovelrole import UserNovelRoleCreate
 from core.database.models import (
     Role,
     UserNovelRole,

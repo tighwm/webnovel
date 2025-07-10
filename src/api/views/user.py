@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Path, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.services import users
-from api.v1.schemas.user import UserRead
-from api.v1.utils import oauth2_schema
+from api.services import users
+from api.schemas.user import UserRead
+from api.utils import oauth2_schema
 from core.database.models import db_helper
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database.models import Novel
-from api.v1.schemas.novel import NovelCreate, NovelPartial, NovelUpdate
+from api.schemas.novel import NovelCreate, NovelPartial, NovelUpdate
 
 
 async def create(

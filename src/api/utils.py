@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from security.jwt import decode_jwt
-from api.v1.crud import sqlalchemy_user as user_crud
+from api.crud import sqlalchemy_user as user_crud
 
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")

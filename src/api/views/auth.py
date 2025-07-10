@@ -10,9 +10,9 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.services import authentication as auth
-from api.v1.schemas.user import UserRead, UserCreate
-from api.v1.utils import validate_form_data
+from api.services import authentication as auth
+from api.schemas.user import UserRead, UserCreate
+from api.utils import validate_form_data
 from core.database.models import db_helper
 
 router = APIRouter(
@@ -92,6 +92,7 @@ async def handle_refresh(
 
 @router.post(
     "/logout/",
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 async def handle_logout(
     response: Response,
@@ -109,4 +110,3 @@ async def handle_logout(
         key="refresh_token",
         httponly=True,
     )
-    return {"success": "true"}

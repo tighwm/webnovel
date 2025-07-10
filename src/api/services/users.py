@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.crud import sqlalchemy_user as user_crud
-from api.v1.schemas.user import UserRead
-from api.v1.utils import get_current_user_by_token, exc_404
+from api.crud import sqlalchemy_user as user_crud
+from api.schemas.user import UserRead
+from api.utils import get_current_user_by_token, exc_404
 
 
 async def get_user(

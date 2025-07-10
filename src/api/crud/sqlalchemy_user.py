@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
 
-from api.v1.schemas.user import UserSaveToDB
+from api.schemas.user import UserSaveToDB
 from core.database.models import User
 
 

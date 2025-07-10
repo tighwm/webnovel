@@ -4,7 +4,7 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database.models import UserSession
-from api.v1.schemas.user_session import UserSessionBase, UserSessionSchema
+from api.schemas.user_session import UserSessionBase, UserSessionSchema
 
 
 async def create(

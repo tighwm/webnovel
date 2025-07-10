@@ -1,17 +1,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.crud import sqlalchemy_role as role_crud
+from api.crud import sqlalchemy_role as role_crud
 from enums import Action, Resource
-from api.v1.schemas.usernovelrole import UserNovelRoleCreate
+from api.schemas.usernovelrole import UserNovelRoleCreate
+
+from enums import RoleNames
 
 
 async def assign_unr_to_user(
     session: AsyncSession,
     user_id: int,
     novel_id: int,
-    role_name: str,
+    role_name: RoleNames,
 ):
-    role = await role_crud.get_role_by_name(session, role_name)
+    role = await role_crud.get_role_by_name(session, role_name.value)
 
     roles_id = await role_crud.get_roles_id_from_unr_by_user_and_novel(
         session=session,

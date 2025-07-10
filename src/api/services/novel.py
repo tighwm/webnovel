@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.crud import sqlalchemy_novel as novel_crud
-from api.v1.schemas.novel import NovelCreate, NovelRead, NovelUpdate
-from api.v1.utils import exc_404
+from api.crud import sqlalchemy_novel as novel_crud
+from api.schemas.novel import NovelCreate, NovelRead, NovelUpdate
+from api.utils import exc_404
 from core.database.models import Novel
 
 

@@ -3,14 +3,14 @@ import uuid
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.v1.utils import exc_401, validate_token, exc_422
+from api.utils import exc_401, validate_token, exc_422
 from security.jwt import create_access_token, create_refresh_token
-from api.v1.schemas.user import UserCreate, UserSaveToDB, UserRead
-from api.v1.schemas.tokens import TokenInfo
+from api.schemas.user import UserCreate, UserSaveToDB, UserRead
+from api.schemas.tokens import TokenInfo
 from security.passwords import hash_password, validate_password
-from api.v1.schemas.user_session import UserSessionBase
-from api.v1.crud import sqlalchemy_user as user_crud
-from api.v1.crud import sqlalchemy_user_session as user_session_crud
+from api.schemas.user_session import UserSessionBase
+from api.crud import sqlalchemy_user as user_crud
+from api.crud import sqlalchemy_user_session as user_session_crud
 
 
 async def register(
