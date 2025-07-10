@@ -117,7 +117,7 @@ class SQLAlchemyRolePermDBInit(AbstractRolePermDBInit):
                 role.permissions = role_permissions
                 self.session.add(role)
 
-        self.session.flush()
+        await self.session.flush()
 
     async def _close_session(self):
         await self.session.close()
