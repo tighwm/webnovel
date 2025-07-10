@@ -7,11 +7,11 @@ faker = Faker()
 
 
 @pytest.fixture()
-async def user_factory(test_session, **kwargs):
+async def user_factory(test_session):
     user = User(
-        email=kwargs.get("email", faker.email()),
-        name=kwargs.get("name", faker.name()),
-        hashed_password=kwargs.get("hashed_password", faker.password()),
+        email=faker.email(),
+        name=faker.name(),
+        hashed_password=faker.password(),
     )
     test_session.add(user)
     await test_session.commit()
