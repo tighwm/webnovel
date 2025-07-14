@@ -42,6 +42,7 @@ class DatabaseHelper:
                 yield session
             except BaseException:
                 await session.rollback()
+                await session.aclose()
                 raise
             await session.commit()
 
