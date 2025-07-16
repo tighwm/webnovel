@@ -92,7 +92,9 @@ def session_maker(test_engine):
 async def test_session(session_maker):
     async with session_maker() as session:
         yield session
-        await session.commit()
+        await session.rollback()
+
+
 @pytest.fixture()
 def mock_session():
     return AsyncMock()
