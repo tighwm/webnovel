@@ -1,10 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-
-@pytest.fixture()
-def mock_session():
-    return AsyncMock()
+from tests.conftest import mock_session
 
 
 @pytest.fixture()

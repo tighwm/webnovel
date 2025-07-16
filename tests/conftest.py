@@ -1,4 +1,5 @@
 import os
+from unittest.mock import AsyncMock
 
 import pytest
 import pg8000.native
@@ -92,3 +93,6 @@ async def test_session(session_maker):
     async with session_maker() as session:
         yield session
         await session.commit()
+@pytest.fixture()
+def mock_session():
+    return AsyncMock()
